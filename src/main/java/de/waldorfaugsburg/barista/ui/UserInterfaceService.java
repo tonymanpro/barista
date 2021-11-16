@@ -6,6 +6,8 @@ import de.waldorfaugsburg.clerk.TransactionResponse;
 import de.waldorfaugsburg.clerk.UserInformationResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Set;
+
 @Slf4j
 public final class UserInterfaceService {
 
@@ -22,13 +24,33 @@ public final class UserInterfaceService {
 
                 log.info("Chip-id '{}' identified as '{}'", chipId, userInformation.getUsername());
                 application.getMdbService().startTransaction(payload -> {
-                    final String barcode = application.getProperties().getProperty("barcode." + payload.getProductId());
+                    final String barcode = application.getProperties().getProperty("product." + payload.getProductId() + ".barcode");
                     if (barcode == null) {
                         log.error("Invalid product-id '{}' received!", payload.getProductId());
                         return false;
                     }
 
-                    log.info("Transaction for product '{}' ({}€) - ('{}') received!", payload.getProductId(), payload.getMoney(), barcode);
+                    log.info("Request for product '{}' ({}€) - ('{}') received!", payload.getProductId(), payload.getMoney(), barcode);
+
+                    // Check for production grade restriction
+                    final Set<String> restrictedFor = Set.of(application.getProperties()
+                            .getProperty("product." + payload.getProductId() + ".restrictedFor")
+                            .split(","));
+
+                    if (restrictedFor.contains(userInformation.getUserGroup())) {
+                        // TODO probably somehow show error to end-user
+                        log.error("Product restricted for this user! Aborting...");
+                        return false;
+                    }
+
+                    // Check if user is staff user
+                    final Set<String> staffUsers = Set.of(application.getProperties()
+                            .getProperty("staff").split(","));
+                    if (staffUsers.contains(userInformation.getUsername())) {
+                        log.info("Staff user! Skipping transaction...");
+                        return true;
+                    }
+
                     final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
                     if (response != TransactionResponse.SUCCESS) {
                         // TODO probably somehow show error to end-user
@@ -42,5 +64,4 @@ public final class UserInterfaceService {
             }
         }).start();
     }
-
 }

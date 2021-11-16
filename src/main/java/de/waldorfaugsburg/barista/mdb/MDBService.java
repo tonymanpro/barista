@@ -32,13 +32,11 @@ public final class MDBService {
                     .dataBits(DataBits._8)
                     .parity(Parity.NONE)
                     .stopBits(StopBits._1));
-            log.info("OPENED");
 
             serial.addListener(event -> {
                 try {
                     final String data = event.getAsciiString();
                     handleIncomingData(data);
-                    log.info("Incoming data " + data);
                 } catch (final IOException e) {
                     log.info("An error occurred while handling data", e);
                 }
@@ -59,6 +57,7 @@ public final class MDBService {
 
         // Sending arbitrary start money to initiate vending session
         send("C", "START", Integer.toString(arbitraryStartMoney));
+        log.info("Session started!");
 
         // Defining timestamp of loop start; in order to calculate time elapsed since
         final long startMillis = System.currentTimeMillis();
@@ -69,6 +68,7 @@ public final class MDBService {
                 // Sending vending stop command if timeout reached
                 send("C", "STOP");
                 // TODO probably somehow show error to end-user
+                log.info("Session stopped due to timeout.");
                 break;
             }
 
