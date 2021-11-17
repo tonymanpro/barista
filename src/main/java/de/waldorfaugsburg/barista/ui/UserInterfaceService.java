@@ -20,6 +20,7 @@ public final class UserInterfaceService {
                 final String chipId = ChipCardReadingUtil.read(monitorPath);
                 final UserInformationResponse userInformation = application.getClerk().getUserInformationByChip(chipId);
                 if (userInformation == null) {
+                    TextToSpeechUtil.speak("INVALID_CHIP");
                     log.error("Invalid chip-id '{}' received!", chipId);
                     continue;
                 }
@@ -39,7 +40,7 @@ public final class UserInterfaceService {
                             .getProperty("product." + payload.getProductId() + ".restrictedFor"));
 
                     if (restrictedFor.contains(userInformation.getUserGroup())) {
-                        TextToSpeechUtil.speak("Unzulässig! Kaffee erst ab Klasse 9!");
+                        TextToSpeechUtil.speak("RESTRICTED");
                         log.error("Product restricted for this user! Aborting...");
                         return false;
                     }
@@ -53,7 +54,7 @@ public final class UserInterfaceService {
 
                     final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
                     if (response != TransactionResponse.SUCCESS) {
-                        TextToSpeechUtil.speak("Fehler: " + response.getHumanReadable());
+                        TextToSpeechUtil.speak(response.name());
                         log.error("Transaction failed! ({})", response.name());
                         return false;
                     }
