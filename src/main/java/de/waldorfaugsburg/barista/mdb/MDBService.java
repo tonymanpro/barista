@@ -67,7 +67,6 @@ public final class MDBService {
             if (System.currentTimeMillis() - startMillis >= selectionTimeoutMillis) {
                 // Sending vending stop command if timeout reached
                 send("C", "STOP");
-                // TODO probably somehow show error to end-user
                 log.info("Session stopped due to timeout.");
                 break;
             }
