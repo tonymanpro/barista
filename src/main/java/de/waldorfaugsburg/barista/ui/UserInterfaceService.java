@@ -6,6 +6,7 @@ import de.waldorfaugsburg.clerk.TransactionResponse;
 import de.waldorfaugsburg.clerk.UserInformationResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.Set;
 
 @Slf4j
@@ -33,9 +34,8 @@ public final class UserInterfaceService {
                     log.info("Request for product '{}' ({}€) - ('{}') received!", payload.getProductId(), payload.getMoney(), barcode);
 
                     // Check for production grade restriction
-                    final Set<String> restrictedFor = Set.of(application.getProperties()
-                            .getProperty("product." + payload.getProductId() + ".restrictedFor")
-                            .split(","));
+                    final Set<String> restrictedFor = readListFromProperty(application.getProperties()
+                            .getProperty("product." + payload.getProductId() + ".restrictedFor"));
 
                     if (restrictedFor.contains(userInformation.getUserGroup())) {
                         // TODO probably somehow show error to end-user
@@ -44,8 +44,7 @@ public final class UserInterfaceService {
                     }
 
                     // Check if user is staff user
-                    final Set<String> staffUsers = Set.of(application.getProperties()
-                            .getProperty("staff").split(","));
+                    final Set<String> staffUsers = readListFromProperty(application.getProperties().getProperty("staff"));
                     if (staffUsers.contains(userInformation.getUsername())) {
                         log.info("Staff user! Skipping transaction...");
                         return true;
@@ -63,5 +62,11 @@ public final class UserInterfaceService {
                 });
             }
         }).start();
+    }
+
+    private Set<String> readListFromProperty(final String property) {
+        if (property == null) return Collections.emptySet();
+
+        return Set.of(property.split(","));
     }
 }

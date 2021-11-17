@@ -85,8 +85,8 @@ public final class MDBService {
 
         // Reading incoming data
         if (parsedData[0].equals("c") && parsedData[1].equals("STATUS") && parsedData[2].equals("VEND")) {
-            final double money = Double.parseDouble(parsedData[3]);
-            final int productId = Integer.parseInt(parsedData[4]);
+            final double money = Double.parseDouble(parsedData[3].trim());
+            final int productId = Integer.parseInt(parsedData[4].trim());
 
             final boolean success = transaction.performTransaction(new MDBTransactionPayload(money, productId));
             send("C", "VEND", success ? Double.toString(money) : "-1");
