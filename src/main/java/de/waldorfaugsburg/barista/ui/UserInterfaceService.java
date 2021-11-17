@@ -1,6 +1,7 @@
 package de.waldorfaugsburg.barista.ui;
 
 import de.waldorfaugsburg.barista.BaristaApplication;
+import de.waldorfaugsburg.barista.util.TextToSpeechUtil;
 import de.waldorfaugsburg.clerk.ChipCardReadingUtil;
 import de.waldorfaugsburg.clerk.TransactionResponse;
 import de.waldorfaugsburg.clerk.UserInformationResponse;
@@ -38,7 +39,7 @@ public final class UserInterfaceService {
                             .getProperty("product." + payload.getProductId() + ".restrictedFor"));
 
                     if (restrictedFor.contains(userInformation.getUserGroup())) {
-                        // TODO probably somehow show error to end-user
+                        TextToSpeechUtil.speak("Unzulässig! Kaffee erst ab Klasse 9!");
                         log.error("Product restricted for this user! Aborting...");
                         return false;
                     }
@@ -52,7 +53,7 @@ public final class UserInterfaceService {
 
                     final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
                     if (response != TransactionResponse.SUCCESS) {
-                        // TODO probably somehow show error to end-user
+                        TextToSpeechUtil.speak("Fehler: " + response.getHumanReadable());
                         log.error("Transaction failed! ({})", response.name());
                         return false;
                     }

@@ -63,7 +63,7 @@ public final class MDBService {
         final long startMillis = System.currentTimeMillis();
 
         // Waiting for transacting to be fulfilled or timeout
-        while (transaction != null) {
+        while (this.transaction != null) {
             if (System.currentTimeMillis() - startMillis >= selectionTimeoutMillis) {
                 // Sending vending stop command if timeout reached
                 send("C", "STOP");
