@@ -46,6 +46,11 @@ public final class UserInterfaceService {
                         return false;
                     }
 
+                    if (userInformation.getUsername().equals(application.getClerk().getUsername())) {
+                        log.error("Service user! Skipping transaction...");
+                        return true;
+                    }
+
                     final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
                     if (response != TransactionResponse.SUCCESS) {
                         TextToSpeechUtil.speak(response.name());
