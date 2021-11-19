@@ -29,6 +29,7 @@ public final class UserInterfaceService {
                 application.getMdbService().startTransaction(payload -> {
                     final String barcode = application.getProperties().getProperty("product." + payload.getProductId() + ".barcode");
                     if (barcode == null) {
+                        TextToSpeechUtil.speak("INVALID_PRODUCT");
                         log.error("Invalid product-id '{}' received!", payload.getProductId());
                         return false;
                     }
@@ -43,13 +44,6 @@ public final class UserInterfaceService {
                         TextToSpeechUtil.speak("RESTRICTED");
                         log.error("Product restricted for this user! Aborting...");
                         return false;
-                    }
-
-                    // Check if user is staff user
-                    final Set<String> staffUsers = readListFromProperty(application.getProperties().getProperty("staff"));
-                    if (staffUsers.contains(userInformation.getUsername())) {
-                        log.info("Staff user! Skipping transaction...");
-                        return true;
                     }
 
                     final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
