@@ -2,6 +2,7 @@ package de.waldorfaugsburg.barista;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 @Slf4j
 public final class Bootstrap {
@@ -16,6 +17,9 @@ public final class Bootstrap {
             application.disable();
             LogManager.shutdown();
         }));
+
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
 
         new Thread(application::enable).start();
 
