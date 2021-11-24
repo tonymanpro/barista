@@ -51,7 +51,7 @@ public final class UserInterfaceService {
                         return true;
                     }
 
-                    final TransactionResponse response = application.getClerk().transaction(chipId, barcode);
+                    final TransactionResponse response = application.getClerk().performTransaction(chipId, barcode);
                     if (response != TransactionResponse.SUCCESS) {
                         TextToSpeechUtil.speak(response.name());
                         log.error("Transaction failed! ({})", response.name());
