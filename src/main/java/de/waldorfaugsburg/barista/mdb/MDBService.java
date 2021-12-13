@@ -7,21 +7,21 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
 @Slf4j
-/**
- * Qibixx MDB service
- * @see https://docs.qibixx.com/mdb-products/mdb-products
+/*
+  Qibixx MDB service
+  @see https://docs.qibixx.com/mdb-products/mdb-products
  */
 public final class MDBService {
 
     private final int arbitraryStartMoney;
-    private final int selectionTimeoutMillis;
+    private final long selectionTimeoutMillis;
 
     private Serial serial;
     private MDBTransaction transaction;
 
     public MDBService(final BaristaApplication application) {
-        this.arbitraryStartMoney = Integer.parseInt(application.getProperties().getProperty("mdb.arbitraryStartMoney"));
-        this.selectionTimeoutMillis = Integer.parseInt(application.getProperties().getProperty("mdb.selectionTimeoutMillis"));
+        this.arbitraryStartMoney = application.getConfiguration().getMdb().getArbitraryStartMoney();
+        this.selectionTimeoutMillis = application.getConfiguration().getMdb().getSelectionTimeoutMillis();
 
         try {
             serial = SerialFactory.createInstance();
@@ -32,6 +32,8 @@ public final class MDBService {
                     .dataBits(DataBits._8)
                     .parity(Parity.NONE)
                     .stopBits(StopBits._1));
+
+            log.info("Serial connection opened on port '{}'", SerialPort.getDefaultPort());
 
             serial.addListener(event -> {
                 try {

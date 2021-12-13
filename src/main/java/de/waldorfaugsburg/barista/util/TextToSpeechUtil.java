@@ -14,6 +14,7 @@ public final class TextToSpeechUtil {
                 final String[] commandAndArgs = new String[]{"/bin/sh", "-c", command};
                 final Process process = Runtime.getRuntime().exec(commandAndArgs);
                 process.waitFor();
+
                 final int exitValue = process.exitValue();
                 if (exitValue != 0) {
                     log.error("TTS exit value was: " + exitValue);
