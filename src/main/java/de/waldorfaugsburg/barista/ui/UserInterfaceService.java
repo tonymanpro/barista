@@ -39,8 +39,8 @@ public final class UserInterfaceService {
 
                     // Check if product id is out of bounds or not set
                     final BaristaConfiguration.Product product;
-                    if (payload.getProductId() >= products.size()
-                            || (product = products.get(payload.getProductId())) == null) {
+                    if (payload.getProductId() > products.size()
+                            || (product = products.get(payload.getProductId() - 1)) == null) {
                         TextToSpeechUtil.speak("INVALID_PRODUCT");
                         log.error("Invalid product-id '{}' received!", payload.getProductId());
                         return false;
