@@ -55,7 +55,7 @@ public final class UserInterfaceService {
                         return false;
                     }
 
-                    if (userInformation.getUsername().equals(application.getClerk().getUsername())) {
+                    if (userInformation.getUsername().equalsIgnoreCase(application.getClerk().getUsername())) {
                         log.error("Service user! Skipping transaction...");
                         return true;
                     }
