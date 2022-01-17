@@ -92,7 +92,7 @@
         <dependency>
             <groupId>de.waldorfaugsburg.clerk</groupId>
             <artifactId>clerk</artifactId>
-            <version>b151221</version>
+            <version>b170122</version>
             <scope>compile</scope>
         </dependency>
 
